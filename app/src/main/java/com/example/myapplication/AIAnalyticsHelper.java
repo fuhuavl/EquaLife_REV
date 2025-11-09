@@ -4,17 +4,12 @@ import android.content.Context;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-// Hapus import POJO Gemini (GeminiRequest, Content, Part, dll.)
-// Kita akan buat file baru: ApiRequest, ApiResponse, Message, Choice
-
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,15 +24,14 @@ public class AIAnalyticsHelper {
     public AIAnalyticsHelper(Context context, DatabaseHelper db, String userEmail) {
         this.db = db;
         this.userEmail = userEmail;
-        this.apiService = RetrofitClient.getApiService(); // Ini akan mengambil RetrofitClient versi Groq
+        this.apiService = RetrofitClient.getApiService();
         this.gson = new Gson();
     }
 
-    // Fungsi adjustDiet, adjustSleep, dan adjustHydration tidak perlu diubah
-    // Salin-tempel saja 3 fungsi itu dari file lamamu.
-    // ...
-    // --- FUNGSI 1: ADJUST DIET ---
-    public void adjustDiet(AIResponseListener listener) {
+    /**
+     * BARU: Menerima targetDate
+     */
+    public void adjustDiet(AIResponseListener listener, String targetDate) {
         UserProfile profile = db.getUserProfile(userEmail);
         List<Task> busySchedule = db.getTasksForUser(userEmail);
 
@@ -48,25 +42,29 @@ public class AIAnalyticsHelper {
 
         String profileJson = gson.toJson(profile);
         String scheduleJson = gson.toJson(busySchedule);
-        String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-        String systemPrompt = "Anda adalah asisten kesehatan. Tugas Anda adalah membuat jadwal makan " +
-                "berdasarkan profil dan jadwal sibuk pengguna. " +
+        // --- PROMPT DIPERTEGAS & DIUBAH ---
+        String systemPrompt = "Anda adalah API JSON. JANGAN beri penjelasan. JANGAN gunakan markdown. " +
+                "Tugas Anda adalah membuat **jadwal makan ideal** berdasarkan profil pengguna. " +
+                "**ANDA HARUS MEMATUHI preferensi diet ('dietPref')** yang ada di dalam data profil. " +
+                "Jika 'dietPref' bilang tidak sarapan, JANGAN BUAT jadwal 'Sarapan'. " +
                 "Anda HARUS membalas HANYA dengan JSON Array yang berisi objek Task. " +
-                "Setiap objek Task harus memiliki key: 'taskName', 'date', 'startTime', dan 'endTime'. " +
-                "Contoh: [{'taskName': 'Sarapan', 'date': '2025-11-02', 'startTime': '07:00', 'endTime': '07:30'}]";
+                "Contoh: [{'taskName': 'Makan Siang', 'date': '2025-11-02', 'startTime': '12:00', 'endTime': '12:30'}]";
 
-        String userPrompt = "Tolong buatkan jadwal 'Sarapan', 'Makan Siang', dan 'Makan Malam' untuk saya hari ini, " +
-                "tanggal " + todayDate + ". " +
-                "Ini adalah profil saya: " + profileJson + ". " +
-                "Ini adalah jadwal sibuk saya (JANGAN menimpa jadwal ini): " + scheduleJson + ". " +
-                "Pastikan jadwal makan tidak bentrok dengan jadwal sibuk saya.";
+        // --- USER PROMPT JUGA DIUBAH ---
+        String userPrompt = "Buatkan **jadwal makan ideal** untuk saya, " +
+                "pada tanggal " + targetDate + ". " +
+                "Profil saya: " + profileJson + ". " +
+                "Sangat penting: **Patuhi 'dietPref' (preferensi diet) dalam profil saya.** " +
+                "Jadwal sibuk saya (JANGAN bentrok): " + scheduleJson;
 
         callApi(systemPrompt, userPrompt, "Diet", listener);
     }
 
-    // --- FUNGSI 2: ADJUST SLEEP ---
-    public void adjustSleep(AIResponseListener listener) {
+    /**
+     * BARU: Menerima targetDate
+     */
+    public void adjustSleep(AIResponseListener listener, String targetDate) {
         UserProfile profile = db.getUserProfile(userEmail);
         List<Task> busySchedule = db.getTasksForUser(userEmail);
 
@@ -77,26 +75,24 @@ public class AIAnalyticsHelper {
 
         String profileJson = gson.toJson(profile);
         String scheduleJson = gson.toJson(busySchedule);
-        String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-        String systemPrompt = "Anda adalah asisten kesehatan. Tugas Anda adalah membuat SATU jadwal tidur ideal " +
-                "berdasarkan profil usia dan jadwal sibuk pengguna. " +
+        String systemPrompt = "Anda adalah API JSON. JANGAN beri penjelasan. JANGAN gunakan markdown. " +
+                "Tugas Anda adalah membuat SATU jadwal tidur ideal 8 jam. " +
                 "Anda HARUS membalas HANYA dengan JSON Array yang berisi SATU objek Task. " +
-                "Objek Task harus memiliki key: 'taskName', 'date', 'startTime', dan 'endTime'. " +
                 "Contoh: [{'taskName': 'Waktu Tidur', 'date': '2025-11-02', 'startTime': '22:00', 'endTime': '06:00'}]";
 
-        String userPrompt = "Tolong buatkan jadwal tidur 8 jam untuk saya malam ini, " +
-                "tanggal " + todayDate + ". " +
-                "Cari slot waktu 8 jam yang paling ideal antara jam 21:00 dan 07:00 keesokan harinya. " +
-                "Ini adalah profil saya: " + profileJson + ". " +
-                "Ini adalah jadwal sibuk saya (JANGAN menimpa jadwal ini): " + scheduleJson + ". " +
-                "Pastikan jadwal tidur tidak bentrok.";
+        String userPrompt = "Buatkan jadwal tidur 8 jam untuk saya, " +
+                "pada tanggal " + targetDate + ", antara jam 21:00 dan 07:00. " + // <-- DIUBAH
+                "Profil saya: " + profileJson + ". " +
+                "Jadwal sibuk saya (JANGAN bentrok): " + scheduleJson;
 
         callApi(systemPrompt, userPrompt, "Sleep", listener);
     }
 
-    // --- FUNGSI 3: ADJUST HYDRATION ---
-    public void adjustHydration(AIResponseListener listener) {
+    /**
+     * BARU: Menerima targetDate
+     */
+    public void adjustHydration(AIResponseListener listener, String targetDate) {
         UserProfile profile = db.getUserProfile(userEmail);
         List<Task> busySchedule = db.getTasksForUser(userEmail);
 
@@ -107,46 +103,37 @@ public class AIAnalyticsHelper {
 
         String profileJson = gson.toJson(profile);
         String scheduleJson = gson.toJson(busySchedule);
-        String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-        String systemPrompt = "Anda adalah asisten kesehatan. Tugas Anda adalah membuat BEBERAPA jadwal pengingat minum " +
-                "sepanjang hari. " +
+        String systemPrompt = "Anda adalah API JSON. JANGAN beri penjelasan. JANGAN gunakan markdown. " +
+                "Tugas Anda adalah membuat 5 jadwal pengingat minum. " +
                 "Anda HARUS membalas HANYA dengan JSON Array yang berisi objek-objek Task. " +
-                "Setiap objek Task harus memiliki key: 'taskName', 'date', 'startTime', dan 'endTime'. " +
                 "Contoh: [{'taskName': 'Minum Air', 'date': '2025-11-02', 'startTime': '08:00', 'endTime': '08:05'}]";
 
-        String userPrompt = "Tolong buatkan 5 jadwal pengingat minum (durasi 5 menit) untuk saya hari ini, " +
-                "tanggal " + todayDate + ", yang tersebar antara jam 08:00 dan 17:00. " +
-                "Ini adalah profil saya: " + profileJson + ". " +
-                "Ini adalah jadwal sibuk saya (JANGAN menimpa jadwal ini): " + scheduleJson + ". " +
-                "Pastikan pengingat minum tidak bentrok.";
+        String userPrompt = "Buatkan 5 jadwal pengingat minum (durasi 5 menit) untuk saya, " +
+                "pada tanggal " + targetDate + ", tersebar antara jam 08:00 dan 17:00. " + // <-- DIUBAH
+                "Profil saya: " + profileJson + ". " +
+                "Jadwal sibuk saya (JANGAN bentrok): " + scheduleJson;
 
         callApi(systemPrompt, userPrompt, "Hydration", listener);
     }
 
-    // ...
 
     /**
-     * Fungsi inti yang memanggil API Groq (Format OpenAI/Senopati).
+     * Fungsi inti (Tidak berubah)
      */
     private void callApi(String systemPrompt, String userPrompt, String logTag, AIResponseListener listener) {
 
-        // --- Struktur Request untuk Groq ---
         List<Message> messages = new ArrayList<>();
         messages.add(new Message("system", systemPrompt));
         messages.add(new Message("user", userPrompt));
 
-        // Model LLaMA 3 dari Groq, sangat cepat.
-        ApiRequest request = new ApiRequest("llama3-8b-8192", messages);
-        // --- Batas Perubahan ---
+        ApiRequest request = new ApiRequest("llama-3.1-8b-instant", messages);
 
-        // Panggil ApiService (versi Groq)
         apiService.getChatCompletion(request, RetrofitClient.API_KEY).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().choices != null && !response.body().choices.isEmpty()) {
 
-                    // Ambil teks jawaban
                     String aiResponseContent = response.body().choices.get(0).message.content;
 
                     if (aiResponseContent == null) {
@@ -155,25 +142,31 @@ public class AIAnalyticsHelper {
                         return;
                     }
 
-                    // Membersihkan string JSON jika ada "```json" dan "```"
-                    if (aiResponseContent.startsWith("```json\n")) {
-                        aiResponseContent = aiResponseContent.substring(7, aiResponseContent.length() - 3).trim();
-                    } else if (aiResponseContent.startsWith("```")) {
-                        aiResponseContent = aiResponseContent.substring(3, aiResponseContent.length() - 3).trim();
+                    Log.d("AIAnalyticsHelper", "Raw AI Response (" + logTag + "): " + aiResponseContent);
+
+                    String jsonOnlyString = null;
+                    int startIndex = aiResponseContent.indexOf("[");
+                    int endIndex = aiResponseContent.lastIndexOf("]");
+
+                    if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
+                        jsonOnlyString = aiResponseContent.substring(startIndex, endIndex + 1);
                     }
 
+                    if (jsonOnlyString == null) {
+                        Log.e("AIAnalyticsHelper", "AI response did not contain a JSON array: " + aiResponseContent);
+                        listener.onError("AI tidak memberikan balasan JSON yang valid.");
+                        return;
+                    }
 
                     try {
-                        // Coba parsing JSON yang dibalas AI
                         Type taskListType = new TypeToken<ArrayList<Task>>(){}.getType();
-                        List<Task> aiTasks = gson.fromJson(aiResponseContent, taskListType);
+                        List<Task> aiTasks = gson.fromJson(jsonOnlyString, taskListType);
 
                         if (aiTasks == null || aiTasks.isEmpty()) {
                             listener.onError("AI tidak memberikan jadwal (null/empty).");
                             return;
                         }
 
-                        // Simpan setiap tugas dari AI ke database
                         for (Task task : aiTasks) {
                             if (task.getTaskName() == null || task.getDate() == null || task.getStartTime() == null || task.getEndTime() == null) {
                                 Log.w("AIAnalyticsHelper", "AI task skipped due to null fields: " + gson.toJson(task));
@@ -181,19 +174,18 @@ public class AIAnalyticsHelper {
                             }
 
                             db.insertTask(userEmail,
-                                    "AI: " + task.getTaskName(), // Tambah prefix "AI:"
+                                    "AI: " + task.getTaskName(),
                                     task.getDate(),
                                     task.getStartTime(),
                                     task.getEndTime());
                         }
-                        listener.onSuccess(); // Berhasil!
+                        listener.onSuccess();
 
                     } catch (Exception e) {
-                        Log.e("AIAnalyticsHelper", "Error parsing AI JSON (" + logTag + "): " + aiResponseContent, e);
-                        listener.onError("AI memberikan balasan, tapi formatnya salah.");
+                        Log.e("AIAnalyticsHelper", "Error parsing AI JSON (" + logTag + "): " + jsonOnlyString, e);
+                        listener.onError("AI memberikan balasan, tapi formatnya salah (setelah diekstrak).");
                     }
                 } else {
-                    // Error dari server (misal: API key salah, 4xx, 5xx)
                     Log.e("AIAnalyticsHelper", "API Response Error (" + logTag + "): Code: " + response.code() + ", Message: " + response.message());
                     listener.onError("Gagal mendapat balasan dari server AI: " + response.message());
                 }
@@ -201,7 +193,6 @@ public class AIAnalyticsHelper {
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                // Error jaringan (tidak ada internet, timeout)
                 Log.e("AIAnalyticsHelper", "Network Error (" + logTag + ")", t);
                 listener.onError("Error Jaringan: " + t.getMessage());
             }

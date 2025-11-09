@@ -6,39 +6,24 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/llAiButtons"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        android:paddingTop="8dp"
+        android:background="@android:color/white"> <Button
+        android:id="@+id/btnAdjustDiet"
+        android:text="Adjust your diet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/teal_700"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"/>
 
-        <TextView
-            android:id="@+id/tvWelcome"
-            android:text="Welcome, User!"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvCalendarAgenda"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="16dp"
-            android:background="#F0F0F0" />
-
-        <!-- Tombol Diet - Hijau -->
-        <Button
-            android:id="@+id/btnAdjustDiet"
-            android:text="Adjust your diet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/teal_700"
-            android:textColor="@android:color/white"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- Tombol Sleep - CYAN/TOSCA seperti di gambar -->
         <Button
             android:id="@+id/btnAdjustSleep"
             android:text="Adjust your sleep hour"
@@ -48,7 +33,6 @@
             android:textColor="@android:color/white"
             android:layout_marginBottom="8dp"/>
 
-        <!-- Tombol Hydration - Orange -->
         <Button
             android:id="@+id/btnAdjustHydration"
             android:text="Adjust your hydration"
@@ -56,16 +40,79 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/teal_700"
             android:textColor="@android:color/white"/>
-
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llTopInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
+
+        <TextView
+            android:id="@+id/tvWelcome"
+            android:text="Welcome, User!"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvCurrentDateDisplay"
+            android:text="Today, Nov 9"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/btnToday"
+                android:text="Today"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"/>
+
+            <Button
+                android:id="@+id/btnTomorrow"
+                android:text="Tomorrow"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCalendarAgenda"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/llTopInfo"
+        android:layout_above="@id/llAiButtons"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="#F0F0F0"
+        android:scrollbars="vertical" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="24dp"
+        android:layout_above="@id/llAiButtons"
+        android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
         app:tint="@android:color/white"
         android:contentDescription="Add Task" />

@@ -73,26 +73,64 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long result = db.insert(TABLE_TASKS, null, values);
         return result != -1;
     }
+    // --- GANTI FUNGSI INI ---
     public List<Task> getTasksForUser(String userEmail) {
         List<Task> taskList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        // Mengurutkan berdasarkan tanggal dan jam mulai
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TASKS + " WHERE "
                 + COL_TASK_USER_EMAIL + "=? ORDER BY " + COL_TASK_DATE + " ASC, "
                 + COL_TASK_START_TIME + " ASC", new String[]{userEmail});
 
         if (cursor.moveToFirst()) {
             do {
+                // --- AMBIL ID DARI DB ---
+                @SuppressLint("Range") long id = cursor.getLong(cursor.getColumnIndex(COL_TASK_ID));
                 @SuppressLint("Range") String taskName = cursor.getString(cursor.getColumnIndex(COL_TASK_NAME));
                 @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex(COL_TASK_DATE));
                 @SuppressLint("Range") String startTime = cursor.getString(cursor.getColumnIndex(COL_TASK_START_TIME));
                 @SuppressLint("Range") String endTime = cursor.getString(cursor.getColumnIndex(COL_TASK_END_TIME));
-                taskList.add(new Task(taskName, date, startTime, endTime));
+                // --- MASUKKAN ID KE CONSTRUCTOR ---
+                taskList.add(new Task(id, taskName, date, startTime, endTime));
             } while (cursor.moveToNext());
         }
         cursor.close();
         return taskList;
+    }
+
+    // --- GANTI FUNGSI INI ---
+    public List<Task> getTasksForUserByDate(String userEmail, String date) {
+        List<Task> taskList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TASKS + " WHERE "
+                + COL_TASK_USER_EMAIL + "=? AND "
+                + COL_TASK_DATE + "=? ORDER BY "
+                + COL_TASK_START_TIME + " ASC", new String[]{userEmail, date});
+
+        if (cursor.moveToFirst()) {
+            do {
+                // --- AMBIL ID DARI DB ---
+                @SuppressLint("Range") long id = cursor.getLong(cursor.getColumnIndex(COL_TASK_ID));
+                @SuppressLint("Range") String taskName = cursor.getString(cursor.getColumnIndex(COL_TASK_NAME));
+                @SuppressLint("Range") String taskDate = cursor.getString(cursor.getColumnIndex(COL_TASK_DATE));
+                @SuppressLint("Range") String startTime = cursor.getString(cursor.getColumnIndex(COL_TASK_START_TIME));
+                @SuppressLint("Range") String endTime = cursor.getString(cursor.getColumnIndex(COL_TASK_END_TIME));
+                // --- MASUKKAN ID KE CONSTRUCTOR ---
+                taskList.add(new Task(id, taskName, taskDate, startTime, endTime));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return taskList;
+    }
+
+    public boolean deleteTaskById(long taskId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Hapus berdasarkan ID
+        int result = db.delete(TABLE_TASKS, COL_TASK_ID + " = ?", new String[]{String.valueOf(taskId)});
+
+        return result > 0; // true jika ada baris yang terhapus
     }
     public UserProfile getUserProfile(String email) {
         SQLiteDatabase db = this.getReadableDatabase();

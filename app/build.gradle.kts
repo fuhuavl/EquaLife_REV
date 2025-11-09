@@ -1,4 +1,4 @@
-import java.util.Properties;
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -8,6 +8,9 @@ android {
     namespace = "com.example.myapplication"
     compileSdk = 36
 
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId = "com.example.myapplication"
         minSdk = 30
@@ -16,6 +19,13 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties = Properties()
+        val localPropertiesFile = project.rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            properties.load(localPropertiesFile.inputStream())
+        }
+        buildConfigField("String", "GROQ_API_KEY", "\"${properties.getProperty("GROQ_API_KEY")}\"")
     }
 
     buildTypes {

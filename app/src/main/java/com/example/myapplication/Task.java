@@ -1,19 +1,31 @@
 package com.example.myapplication;
 
 public class Task {
+    // --- TAMBAHAN BARU ---
+    private long id;
+    // --- BATAS TAMBAHAN ---
+
     private String taskName;
     private String date;
     private String startTime;
     private String endTime;
 
-    public Task(String taskName, String date, String startTime, String endTime) {
+    // --- CONSTRUCTOR DIUBAH ---
+    public Task(long id, String taskName, String date, String startTime, String endTime) {
+        this.id = id;
         this.taskName = taskName;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    // Getters
+    // --- GETTER BARU ---
+    public long getId() {
+        return id;
+    }
+    // --- BATAS GETTER BARU ---
+
+    // Getters (sisanya sama)
     public String getTaskName() {
         return taskName;
     }
@@ -30,7 +42,6 @@ public class Task {
         return endTime;
     }
 
-    // Getter gabungan untuk waktu
     public String getTimeRange() {
         return startTime + " - " + endTime;
     }

@@ -12,15 +12,24 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private List<Task> taskList;
 
-    // Constructor
-    public TaskAdapter(List<Task> taskList) {
-        this.taskList = taskList;
+    // --- INTERFACE BARU UNTUK LISTENER ---
+    public interface OnTaskLongClickListener {
+        void onTaskLongClick(Task task);
     }
+
+    private OnTaskLongClickListener longClickListener;
+    // --- BATAS INTERFACE BARU ---
+
+    // --- CONSTRUCTOR DIUBAH ---
+    public TaskAdapter(List<Task> taskList, OnTaskLongClickListener longClickListener) {
+        this.taskList = taskList;
+        this.longClickListener = longClickListener;
+    }
+    // --- BATAS CONSTRUCTOR ---
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate layout item_task.xml
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_task, parent, false);
         return new ViewHolder(view);
@@ -28,13 +37,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Ambil data dari list
         Task task = taskList.get(position);
 
-        // Set data ke TextViews
         holder.tvTaskName.setText(task.getTaskName());
         holder.tvTaskDate.setText(task.getDate());
         holder.tvTaskTime.setText(task.getTimeRange());
+
+        // --- TAMBAHKAN LONG CLICK LISTENER ---
+        holder.itemView.setOnLongClickListener(v -> {
+            if (longClickListener != null) {
+                longClickListener.onTaskLongClick(task);
+                return true; // event sudah di-handle
+            }
+            return false;
+        });
+        // --- BATAS TAMBAHAN ---
     }
 
     @Override
