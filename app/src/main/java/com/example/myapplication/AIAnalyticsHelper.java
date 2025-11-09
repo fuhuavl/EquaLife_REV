@@ -4,14 +4,12 @@ import android.content.Context;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,11 +24,15 @@ public class AIAnalyticsHelper {
     public AIAnalyticsHelper(Context context, DatabaseHelper db, String userEmail) {
         this.db = db;
         this.userEmail = userEmail;
+        // Ambil ApiService dari RetrofitClient versi Gemini
         this.apiService = RetrofitClient.getApiService();
         this.gson = new Gson();
     }
 
-    // --- FUNGSI 1: ADJUST DIET ---
+    /**
+     * Meminta AI untuk membuat jadwal makan (Sarapan, Makan Siang, Makan Malam)
+     * yang disesuaikan dengan profil dan jadwal sibuk pengguna.
+     */
     public void adjustDiet(AIResponseListener listener) {
         UserProfile profile = db.getUserProfile(userEmail);
         List<Task> busySchedule = db.getTasksForUser(userEmail);
@@ -56,11 +58,13 @@ public class AIAnalyticsHelper {
                 "Ini adalah jadwal sibuk saya (JANGAN menimpa jadwal ini): " + scheduleJson + ". " +
                 "Pastikan jadwal makan tidak bentrok dengan jadwal sibuk saya.";
 
-        // Panggil API
         callApi(systemPrompt, userPrompt, "Diet", listener);
     }
 
-    // --- FUNGSI 2: ADJUST SLEEP (BARU) ---
+    /**
+     * Meminta AI untuk membuat satu jadwal tidur ideal (8 jam)
+     * yang disesuaikan dengan profil dan jadwal sibuk pengguna.
+     */
     public void adjustSleep(AIResponseListener listener) {
         UserProfile profile = db.getUserProfile(userEmail);
         List<Task> busySchedule = db.getTasksForUser(userEmail);
@@ -87,11 +91,13 @@ public class AIAnalyticsHelper {
                 "Ini adalah jadwal sibuk saya (JANGAN menimpa jadwal ini): " + scheduleJson + ". " +
                 "Pastikan jadwal tidur tidak bentrok.";
 
-        // Panggil API
         callApi(systemPrompt, userPrompt, "Sleep", listener);
     }
 
-    // --- FUNGSI 3: ADJUST HYDRATION (BARU) ---
+    /**
+     * Meminta AI untuk membuat beberapa jadwal pengingat minum
+     * yang disesuaikan dengan jadwal sibuk pengguna.
+     */
     public void adjustHydration(AIResponseListener listener) {
         UserProfile profile = db.getUserProfile(userEmail);
         List<Task> busySchedule = db.getTasksForUser(userEmail);
@@ -117,39 +123,79 @@ public class AIAnalyticsHelper {
                 "Ini adalah jadwal sibuk saya (JANGAN menimpa jadwal ini): " + scheduleJson + ". " +
                 "Pastikan pengingat minum tidak bentrok.";
 
-        // Panggil API
         callApi(systemPrompt, userPrompt, "Hydration", listener);
     }
 
 
-    // --- FUNGSI UTAMA PEMANGGIL API (REUSABLE) ---
+    /**
+     * Fungsi inti yang memanggil API Gemini.
+     * Menggunakan struktur "multi-turn chat" untuk memberi instruksi sistem.
+     */
     private void callApi(String systemPrompt, String userPrompt, String logTag, AIResponseListener listener) {
 
-        List<Message> messages = new ArrayList<>();
-        messages.add(new Message("system", systemPrompt));
-        messages.add(new Message("user", userPrompt));
+        // --- Struktur Request untuk GEMINI ---
+        List<Content> contents = new ArrayList<>();
 
-        ApiRequest request = new ApiRequest("qwen2.5:14b", messages);
+        // 1. Masukkan instruksi sistem sebagai giliran "user"
+        List<Part> systemParts = new ArrayList<>();
+        systemParts.add(new Part(systemPrompt));
+        contents.add(new Content(systemParts, "user"));
 
-        apiService.getChatCompletion(request, RetrofitClient.API_KEY).enqueue(new Callback<ApiResponse>() {
+        // 2. Masukkan balasan "model" palsu untuk 'memaksa' AI mematuhi instruksi
+        List<Part> modelParts = new ArrayList<>();
+        modelParts.add(new Part("OK. Saya adalah asisten kesehatan dan akan membalas HANYA dengan JSON Array."));
+        contents.add(new Content(modelParts, "model"));
+
+        // 3. Masukkan prompt user yang sebenarnya sebagai giliran "user"
+        List<Part> userParts = new ArrayList<>();
+        userParts.add(new Part(userPrompt));
+        contents.add(new Content(userParts, "user"));
+
+        // Buat request body Gemini
+        GeminiRequest request = new GeminiRequest(contents);
+        // --- Batas Perubahan ---
+
+        // Panggil ApiService (versi Gemini)
+        apiService.getChatCompletion(request, RetrofitClient.API_KEY).enqueue(new Callback<GeminiResponse>() {
             @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null && !response.body().choices.isEmpty()) {
+            public void onResponse(Call<GeminiResponse> call, Response<GeminiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
 
-                    String aiResponseContent = response.body().choices.get(0).message.content;
+                    // Ambil teks jawaban dari helper di GeminiResponse
+                    String aiResponseContent = response.body().getResponseText();
+
+                    if (aiResponseContent == null) {
+                        Log.w("AIAnalyticsHelper", "AI response content is null (" + logTag + ")");
+                        listener.onError("AI tidak memberikan balasan.");
+                        return;
+                    }
+
+                    // Membersihkan string JSON jika ada "```json" dan "```"
+                    if (aiResponseContent.startsWith("```json\n")) {
+                        aiResponseContent = aiResponseContent.substring(7, aiResponseContent.length() - 3).trim();
+                    } else if (aiResponseContent.startsWith("```")) {
+                        aiResponseContent = aiResponseContent.substring(3, aiResponseContent.length() - 3).trim();
+                    }
+
 
                     try {
-                        // AI membalas JSON Array (List<Task>), kita parse
+                        // Coba parsing JSON yang dibalas AI
                         Type taskListType = new TypeToken<ArrayList<Task>>(){}.getType();
                         List<Task> aiTasks = gson.fromJson(aiResponseContent, taskListType);
 
                         if (aiTasks == null || aiTasks.isEmpty()) {
-                            listener.onError("AI tidak memberikan jadwal.");
+                            listener.onError("AI tidak memberikan jadwal (null/empty).");
                             return;
                         }
 
                         // Simpan setiap tugas dari AI ke database
                         for (Task task : aiTasks) {
+                            if (task.getTaskName() == null || task.getDate() == null || task.getStartTime() == null || task.getEndTime() == null) {
+                                // Lewati task yang datanya tidak lengkap
+                                Log.w("AIAnalyticsHelper", "AI task skipped due to null fields: " + gson.toJson(task));
+                                continue;
+                            }
+
                             db.insertTask(userEmail,
                                     "AI: " + task.getTaskName(), // Tambah prefix "AI:"
                                     task.getDate(),
@@ -163,13 +209,15 @@ public class AIAnalyticsHelper {
                         listener.onError("AI memberikan balasan, tapi formatnya salah.");
                     }
                 } else {
-                    Log.e("AIAnalyticsHelper", "API Response Error (" + logTag + "): " + response.message());
-                    listener.onError("Gagal mendapat balasan dari server AI.");
+                    // Error dari server (misal: API key salah, 4xx, 5xx)
+                    Log.e("AIAnalyticsHelper", "API Response Error (" + logTag + "): Code: " + response.code() + ", Message: " + response.message());
+                    listener.onError("Gagal mendapat balasan dari server AI: " + response.message());
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
+            public void onFailure(Call<GeminiResponse> call, Throwable t) {
+                // Error jaringan (tidak ada internet, timeout)
                 Log.e("AIAnalyticsHelper", "Network Error (" + logTag + ")", t);
                 listener.onError("Error Jaringan: " + t.getMessage());
             }

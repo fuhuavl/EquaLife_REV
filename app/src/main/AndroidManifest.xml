@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
 
-        <!-- Halaman intro -->
         <activity android:name=".HeightActivity" />
         <activity android:name=".AgeActivity" />
         <activity android:name=".NameActivity" />
@@ -27,7 +26,6 @@
         <activity android:name=".HomeActivity" />
         <activity android:name=".AddTaskActivity" />
 
-        <!-- Halaman utama (Login) -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
