@@ -29,7 +29,7 @@ public class WeightActivity extends AppCompatActivity {
                 Intent intent = new Intent(WeightActivity.this, DietActivity.class);
                 intent.putExtra("USER_EMAIL", getIntent().getStringExtra("USER_EMAIL"));
                 intent.putExtra("USER_NAME", getIntent().getStringExtra("USER_NAME"));
-                intent.putExtra("USER_AGE_RANGE", getIntent().getStringExtra("USER_AGE_RANGE"));
+                intent.putExtra("USER_AGE", getIntent().getStringExtra("USER_AGE")); // ✅ Konsisten
                 intent.putExtra("USER_HEIGHT", getIntent().getStringExtra("USER_HEIGHT"));
                 intent.putExtra("USER_WEIGHT", weightText);
                 startActivity(intent);

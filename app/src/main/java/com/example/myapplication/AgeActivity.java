@@ -26,9 +26,9 @@ public class AgeActivity extends AppCompatActivity {
                 String name = getIntent().getStringExtra("USER_NAME");
                 String ageRange = ((Button) v).getText().toString();
                 Intent intent = new Intent(AgeActivity.this, HeightActivity.class);
-                intent.putExtra("USER_NAME", name);
-                intent.putExtra("USER_AGE_RANGE", ageRange);
                 intent.putExtra("USER_EMAIL", email);
+                intent.putExtra("USER_NAME", name);
+                intent.putExtra("USER_AGE", ageRange); // ✅ Konsisten pakai USER_AGE
                 startActivity(intent);
             }
         };

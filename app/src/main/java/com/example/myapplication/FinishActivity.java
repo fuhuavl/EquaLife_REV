@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.view.View;
-import android.widget.Button; // <-- 1. IMPORT Button
+import android.widget.Button;
 
 public class FinishActivity extends AppCompatActivity {
 
@@ -22,9 +22,11 @@ public class FinishActivity extends AppCompatActivity {
         btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Data sudah tersimpan di DietActivity, langsung pindah ke Home
                 Intent intent = new Intent(FinishActivity.this, HomeActivity.class);
                 intent.putExtra("USER_EMAIL", email);
                 startActivity(intent);
+                finish(); // ✅ Tutup FinishActivity supaya gak bisa back
             }
         });
     }

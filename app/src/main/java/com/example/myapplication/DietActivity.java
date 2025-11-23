@@ -15,7 +15,7 @@ public class DietActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diet);
-        db = new DatabaseHelper(this); // Inisialisasi DB
+        db = new DatabaseHelper(this);
 
         btnOption1 = findViewById(R.id.btnOption1);
         btnOption2 = findViewById(R.id.btnOption2);
@@ -25,30 +25,34 @@ public class DietActivity extends AppCompatActivity {
         View.OnClickListener goNext = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 1. Ambil SEMUA data
+                // 1. Ambil SEMUA data dari intent sebelumnya
                 Intent previousIntent = getIntent();
                 String email = previousIntent.getStringExtra("USER_EMAIL");
                 String name = previousIntent.getStringExtra("USER_NAME");
-                String ageRange = previousIntent.getStringExtra("USER_AGE_RANGE");
+                String ageRange = previousIntent.getStringExtra("USER_AGE"); // ✅ Konsisten
                 String height = previousIntent.getStringExtra("USER_HEIGHT");
                 String weight = previousIntent.getStringExtra("USER_WEIGHT");
-                String dietPref = ((Button) v).getText().toString(); // <-- Data diet
+                String dietPref = ((Button) v).getText().toString();
 
-                // 2. SIMPAN data ke DB
+                // 2. SIMPAN semua data ke database
                 boolean updated = db.updateOnboardingData(email, name, ageRange, height, weight, dietPref);
+
                 if (updated) {
-                    Toast.makeText(DietActivity.this, "Profile saved!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DietActivity.this, "Profile saved successfully!", Toast.LENGTH_SHORT).show();
+
+                    // 3. Pindah ke FinishActivity
+                    Intent intent = new Intent(DietActivity.this, FinishActivity.class);
+                    intent.putExtra("USER_EMAIL", email);
+                    intent.putExtra("USER_NAME", name);
+                    intent.putExtra("USER_AGE", ageRange);
+                    intent.putExtra("USER_HEIGHT", height);
+                    intent.putExtra("USER_WEIGHT", weight);
+                    intent.putExtra("USER_DIET", dietPref);
+                    startActivity(intent);
+                    finish(); // Tutup DietActivity
                 } else {
-                    Toast.makeText(DietActivity.this, "Failed to save profile.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DietActivity.this, "Failed to save profile. Please try again.", Toast.LENGTH_SHORT).show();
                 }
-
-                // 3. Pindah ke FinishActivity
-                Intent intent = new Intent(DietActivity.this, FinishActivity.class);
-                intent.putExtra("USER_EMAIL", email); // Oper email
-                startActivity(intent);
-
-                // 4. TUTUP activity ini
-                finish();
             }
         };
 
