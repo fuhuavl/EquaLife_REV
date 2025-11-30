@@ -12,18 +12,25 @@ public class IntroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        // Ambil layout utama
         View rootLayout = findViewById(android.R.id.content);
-
         String email = getIntent().getStringExtra("USER_EMAIL");
 
-        // Kalau layar di-tap di mana saja → pindah ke NameActivity
+        rootLayout.setAlpha(0f);
+        rootLayout.animate()
+                .alpha(1f)
+                .setDuration(600)
+                .start();
+
         rootLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(IntroActivity.this, NameActivity.class);
                 intent.putExtra("USER_EMAIL", email);
                 startActivity(intent);
+
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+                finish();
             }
         });
     }

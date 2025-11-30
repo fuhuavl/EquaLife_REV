@@ -2,39 +2,63 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
-    android:padding="24dp">
+    android:orientation="vertical"
+    android:background="@drawable/gradient_intro_background"
+    android:padding="40dp">
 
+    <!-- Title Text -->
     <TextView
-        android:text="How much do you weigh?"
-        android:textSize="20sp"
-        android:layout_marginBottom="16dp"
-        android:textStyle="bold"
-        android:gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="How much do\nyou weigh?"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="24dp"/>
 
+    <!-- Weight Input with Rounded Corners & Shadow -->
     <EditText
         android:id="@+id/inputWeight"
-        android:hint="Enter Number"
-        android:inputType="number"
+        android:hint="Enter Weight (kg)"
+        android:textColorHint="#999999"
+        android:textColor="#333333"
+        android:background="@drawable/white_rounded_input"
+        android:padding="18dp"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:imeOptions="actionNext"
+        android:elevation="6dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
+        android:layout_height="56dp"/>
 
+    <!-- Submit Button (Purple) -->
     <Button
         android:id="@+id/btnSubmitWeight"
-        android:text="Submit"
+        android:text="Next"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/button_background"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:elevation="8dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/teal_700"
-        android:textColor="@android:color/white"/>
+        android:layout_height="56dp"/>
 
+    <!-- Back Button (Transparent) -->
     <Button
         android:id="@+id/btnBack"
         android:text="‹ Back"
         android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
 </LinearLayout>

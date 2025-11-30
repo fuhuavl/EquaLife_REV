@@ -38,27 +38,39 @@ public class SignupActivity extends AppCompatActivity {
                 return;
             }
 
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (password.length() < 6) {
+                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (!password.equals(confirmPassword)) {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (db.checkEmailExists(email)) {
-                Toast.makeText(this, "Email already registered", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Email already registered. Please login.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             boolean inserted = db.insertUser(email, password);
             if (inserted) {
-                Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(SignupActivity.this, MainActivity.class));
-                finish();
+                Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(SignupActivity.this, IntroActivity.class);
+                intent.putExtra("USER_EMAIL", email);
+                startActivity(intent);
+                finish(); // Tutup SignupActivity
             } else {
-                Toast.makeText(this, "Failed to register", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Teks "Already have an account? Login" → Langsung ke MainActivity
         tvGoLogin.setOnClickListener(v -> {
             startActivity(new Intent(SignupActivity.this, MainActivity.class));
             finish();

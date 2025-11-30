@@ -3,14 +3,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="24dp"
-    android:background="@android:color/white">
+    android:background="@drawable/gradient_intro_background"
+    android:padding="40dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="How old are you?"
-        android:textSize="20sp"
+        android:textSize="32sp"
+        android:textColor="@android:color/white"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
 
@@ -18,7 +19,7 @@
     <Button
         android:id="@+id/btnAge1"
         android:text="6–12 Years Old"
-        android:background="#DDDDDD"
+        android:background="@drawable/button_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"/>
@@ -26,7 +27,7 @@
     <Button
         android:id="@+id/btnAge2"
         android:text="13–18 Years Old"
-        android:background="#DDDDDD"
+        android:background="@drawable/button_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"/>
@@ -34,7 +35,7 @@
     <Button
         android:id="@+id/btnAge3"
         android:text="18+ Years Old"
-        android:background="#DDDDDD"
+        android:background="@drawable/button_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -43,7 +44,7 @@
         android:text="‹ Back"
         android:layout_marginTop="16dp"
         android:background="@android:color/transparent"
-        android:textColor="#333333"
+        android:textColor="#ffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>

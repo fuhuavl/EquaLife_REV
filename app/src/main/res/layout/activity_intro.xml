@@ -4,34 +4,30 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@android:color/white"
-    android:padding="24dp">
+    android:background="@drawable/gradient_intro_background"
+    android:padding="32dp">
 
+    <!-- Main Text -->
     <TextView
-        android:text="Are you new to Equalife?"
-        android:textSize="20sp"
+        android:text="Are you new to\nEqualife?\nDon't worry!"
+        android:textSize="32sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="8dp"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="40dp"
         android:gravity="center"
+        android:lineSpacingExtra="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <!-- Subtitle -->
     <TextView
-        android:text="Don’t worry!"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="32dp"
+        android:text="Let's start with a\nshort introduction."
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:alpha="0.9"
         android:gravity="center"
+        android:lineSpacingExtra="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:text="Let’s start with a short introduction."
-        android:textSize="12sp"
-        android:textColor="#666666"
-        android:gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 </LinearLayout>

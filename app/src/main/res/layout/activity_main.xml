@@ -3,99 +3,133 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:padding="24dp">
+    android:fillViewport="true">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:layout_height="wrap_content">
 
-        <!-- App Title -->
-        <TextView
-            android:text="EquaLife"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="60dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <!-- Subtitle -->
-        <TextView
-            android:text="Organize Today,\nLive Better Tomorrow."
-            android:textSize="14sp"
-            android:gravity="center"
-            android:textColor="#555555"
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <!-- Login Label -->
-        <TextView
-            android:text="Login"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="40dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <!-- Username Input -->
-        <EditText
-            android:id="@+id/etUsername"
-            android:hint="Username or Email"
-            android:background="#E0E0E0"
-            android:padding="10dp"
-            android:layout_marginTop="8dp"
+        <!-- Purple Header Section -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp" />
+            android:layout_height="280dp"
+            android:background="@drawable/gradient_header"
+            android:padding="32dp">
 
-        <!-- Password Input -->
-        <EditText
-            android:id="@+id/etPassword"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:background="#E0E0E0"
-            android:padding="10dp"
-            android:layout_marginTop="12dp"
+            <!-- App Title -->
+            <TextView
+                android:id="@+id/tvAppTitle"
+                android:text="EquaLife"
+                android:textSize="48sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="60dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:id="@+id/tvSubtitle"
+                android:text="Organize Today,\nLive Better Tomorrow."
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:layout_below="@id/tvAppTitle"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <!-- White Card Section -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp" />
+            android:layout_height="494dp"
+            android:layout_marginTop="-40dp"
+            android:background="@drawable/rounded_top_card"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="32dp">
 
-        <!-- Login Button -->
-        <Button
-            android:id="@+id/btnLogin"
-            android:text="Login"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#3F51B5"
-            android:layout_marginTop="24dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <!-- Login Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        <!-- Sign Up Text -->
-        <TextView
-            android:id="@+id/tvSignUp"
-            android:text="Don’t have an account? Sign Up"
-            android:textSize="13sp"
-            android:textColor="#000000"
-            android:layout_marginTop="40dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <!-- Username or Email Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Username or Email"
+                android:textColor="#666666"
+                android:textSize="14sp" />
 
-        <!-- Sign Up with -->
-        <TextView
-            android:text="Or Sign Up with"
-            android:textSize="13sp"
-            android:textColor="#777777"
-            android:layout_marginTop="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <!-- Username Input -->
+            <EditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/input_background"
+                android:hint="Enter your username or email"
+                android:inputType="textEmailAddress"
+                android:padding="16dp"
+                android:textSize="15sp" />
 
-        <!-- Placeholder Icon -->
-        <View
-            android:background="#D3D3D3"
-            android:layout_marginTop="8dp"
-            android:layout_width="36dp"
-            android:layout_height="36dp" />
+            <!-- Password Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Password"
+                android:textColor="#666666"
+                android:textSize="14sp" />
+
+            <!-- Password Input -->
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/input_background"
+                android:hint="Enter your password"
+                android:inputType="textPassword"
+                android:padding="16dp"
+                android:textSize="15sp" />
+
+            <!-- Login Button -->
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/button_background"
+                android:elevation="2dp"
+                android:text="Login"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Sign Up Text -->
+            <TextView
+                android:id="@+id/tvSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text="Don't have an account? Sign Up"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

@@ -2,16 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
-    android:padding="24dp">
+    android:orientation="vertical"
+    android:background="@drawable/gradient_intro_background"
+    android:padding="40dp">
 
     <TextView
         android:text="How's your eating habit?"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="32sp"
         android:textStyle="bold"
+        android:textColor="#ffff"
         android:layout_marginBottom="16dp"/>
 
     <Button
@@ -20,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/teal_700"
+        android:background="@drawable/white_button_background"
         android:textColor="@android:color/white"/>
 
     <Button
@@ -29,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/teal_700"
+        android:background="@drawable/button_background"
         android:textColor="@android:color/white"/>
 
     <Button
@@ -38,12 +40,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/teal_700"
+        android:background="@drawable/button_background"
         android:textColor="@android:color/white"/>
 
     <Button
         android:id="@+id/btnBack"
         android:text="‹ Back"
+        android:background="@android:color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"/>

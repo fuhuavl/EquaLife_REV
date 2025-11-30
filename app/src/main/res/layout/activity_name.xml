@@ -1,34 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@android:color/white">
+    android:background="@drawable/gradient_intro_background"
+    android:padding="40dp">
 
+    <!-- Title Text -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="What should we call you?"
-        android:textSize="20sp"
+        android:text="What should we\ncall you?"
+        android:textSize="32sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="16dp"/>
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="24dp"/>
 
+    <!-- Name Input with Rounded Corners & Shadow -->
     <EditText
         android:id="@+id/etName"
         android:hint="Enter Your Name"
-        android:background="#DDDDDD"
-        android:padding="12dp"
+        android:textColorHint="#999999"
+        android:textColor="#333333"
+        android:background="@drawable/white_rounded_input"
+        android:padding="18dp"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:inputType="textPersonName"
+        android:imeOptions="actionNext"
+        android:elevation="6dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="56dp"/>
 
+    <!-- Next Button (White with Purple Text) -->
     <Button
         android:id="@+id/btnNext"
         android:text="Next"
         android:layout_marginTop="24dp"
-        android:backgroundTint="#3F51B5"
-        android:textColor="@android:color/white"
+        android:background="@drawable/button_background"
+        android:textColor="#ffff"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:elevation="4dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="56dp"/>
+
 </LinearLayout>
