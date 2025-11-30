@@ -28,7 +28,6 @@ public class SignupActivity extends AppCompatActivity {
         btnSignupSubmit = findViewById(R.id.btnSignupSubmit);
         tvGoLogin = findViewById(R.id.tvGoLogin);
 
-        // Tombol Sign Up
         btnSignupSubmit.setOnClickListener(v -> {
             String email = etSignupEmail.getText().toString().trim();
             String password = etSignupPassword.getText().toString().trim();

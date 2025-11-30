@@ -5,11 +5,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,7 +15,7 @@ public class AIAnalyticsHelper {
 
     private DatabaseHelper db;
     private String userEmail;
-    private ApiService apiService;
+    public ApiService apiService;
     private Gson gson;
 
     public AIAnalyticsHelper(Context context, DatabaseHelper db, String userEmail) {
@@ -29,7 +26,7 @@ public class AIAnalyticsHelper {
     }
 
     /**
-     * BARU: Menerima targetDate
+     * Adjust Diet - menerima targetDate
      */
     public void adjustDiet(AIResponseListener listener, String targetDate) {
         UserProfile profile = db.getUserProfile(userEmail);
@@ -43,7 +40,6 @@ public class AIAnalyticsHelper {
         String profileJson = gson.toJson(profile);
         String scheduleJson = gson.toJson(busySchedule);
 
-        // --- PROMPT DIPERTEGAS & DIUBAH ---
         String systemPrompt = "Anda adalah API JSON. JANGAN beri penjelasan. JANGAN gunakan markdown. " +
                 "Tugas Anda adalah membuat **jadwal makan ideal** berdasarkan profil pengguna. " +
                 "**ANDA HARUS MEMATUHI preferensi diet ('dietPref')** yang ada di dalam data profil. " +
@@ -51,7 +47,6 @@ public class AIAnalyticsHelper {
                 "Anda HARUS membalas HANYA dengan JSON Array yang berisi objek Task. " +
                 "Contoh: [{'taskName': 'Makan Siang', 'date': '2025-11-02', 'startTime': '12:00', 'endTime': '12:30'}]";
 
-        // --- USER PROMPT JUGA DIUBAH ---
         String userPrompt = "Buatkan **jadwal makan ideal** untuk saya, " +
                 "pada tanggal " + targetDate + ". " +
                 "Profil saya: " + profileJson + ". " +
@@ -62,7 +57,7 @@ public class AIAnalyticsHelper {
     }
 
     /**
-     * BARU: Menerima targetDate
+     * Adjust Sleep - menerima targetDate
      */
     public void adjustSleep(AIResponseListener listener, String targetDate) {
         UserProfile profile = db.getUserProfile(userEmail);
@@ -82,7 +77,7 @@ public class AIAnalyticsHelper {
                 "Contoh: [{'taskName': 'Waktu Tidur', 'date': '2025-11-02', 'startTime': '22:00', 'endTime': '06:00'}]";
 
         String userPrompt = "Buatkan jadwal tidur 8 jam untuk saya, " +
-                "pada tanggal " + targetDate + ", antara jam 21:00 dan 07:00. " + // <-- DIUBAH
+                "pada tanggal " + targetDate + ", antara jam 21:00 dan 07:00. " +
                 "Profil saya: " + profileJson + ". " +
                 "Jadwal sibuk saya (JANGAN bentrok): " + scheduleJson;
 
@@ -90,7 +85,7 @@ public class AIAnalyticsHelper {
     }
 
     /**
-     * BARU: Menerima targetDate
+     * Adjust Hydration - menerima targetDate
      */
     public void adjustHydration(AIResponseListener listener, String targetDate) {
         UserProfile profile = db.getUserProfile(userEmail);
@@ -110,7 +105,7 @@ public class AIAnalyticsHelper {
                 "Contoh: [{'taskName': 'Minum Air', 'date': '2025-11-02', 'startTime': '08:00', 'endTime': '08:05'}]";
 
         String userPrompt = "Buatkan 5 jadwal pengingat minum (durasi 5 menit) untuk saya, " +
-                "pada tanggal " + targetDate + ", tersebar antara jam 08:00 dan 17:00. " + // <-- DIUBAH
+                "pada tanggal " + targetDate + ", tersebar antara jam 08:00 dan 17:00. " +
                 "Profil saya: " + profileJson + ". " +
                 "Jadwal sibuk saya (JANGAN bentrok): " + scheduleJson;
 
@@ -119,7 +114,7 @@ public class AIAnalyticsHelper {
 
 
     /**
-     * Fungsi inti (Tidak berubah)
+     * FUNGSI INTI - DIUBAH UNTUK SENOPATI API
      */
     private void callApi(String systemPrompt, String userPrompt, String logTag, AIResponseListener listener) {
 
@@ -129,21 +124,29 @@ public class AIAnalyticsHelper {
 
         ApiRequest request = new ApiRequest("llama-3.1-8b-instant", messages);
 
-        apiService.getChatCompletion(request, RetrofitClient.API_KEY).enqueue(new Callback<ApiResponse>() {
+        Log.d("AIAnalyticsHelper", "=== SENDING REQUEST (" + logTag + ") ===");
+        Log.d("AIAnalyticsHelper", "Target Date: " + userPrompt.substring(userPrompt.indexOf("tanggal") + 8, userPrompt.indexOf("tanggal") + 18));
+
+        // GANTI KE SenopatiResponse
+        apiService.getChatCompletion(request).enqueue(new Callback<SenopatiResponse>() {
             @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().choices != null && !response.body().choices.isEmpty()) {
+            public void onResponse(Call<SenopatiResponse> call, Response<SenopatiResponse> response) {
+                Log.d("AIAnalyticsHelper", "=== RESPONSE CODE: " + response.code() + " ===");
 
-                    String aiResponseContent = response.body().choices.get(0).message.content;
+                if (response.isSuccessful() && response.body() != null) {
 
-                    if (aiResponseContent == null) {
-                        Log.w("AIAnalyticsHelper", "AI response content is null (" + logTag + ")");
+                    // AMBIL CONTENT LANGSUNG (GA LEWAT CHOICES LAGI)
+                    String aiResponseContent = response.body().content;
+
+                    if (aiResponseContent == null || aiResponseContent.isEmpty()) {
+                        Log.e("AIAnalyticsHelper", "Content is null or empty (" + logTag + ")");
                         listener.onError("AI tidak memberikan balasan.");
                         return;
                     }
 
                     Log.d("AIAnalyticsHelper", "Raw AI Response (" + logTag + "): " + aiResponseContent);
 
+                    // EKSTRAK JSON ARRAY
                     String jsonOnlyString = null;
                     int startIndex = aiResponseContent.indexOf("[");
                     int endIndex = aiResponseContent.lastIndexOf("]");
@@ -167,6 +170,7 @@ public class AIAnalyticsHelper {
                             return;
                         }
 
+                        // INSERT KE DATABASE
                         for (Task task : aiTasks) {
                             if (task.getTaskName() == null || task.getDate() == null || task.getStartTime() == null || task.getEndTime() == null) {
                                 Log.w("AIAnalyticsHelper", "AI task skipped due to null fields: " + gson.toJson(task));
@@ -192,7 +196,7 @@ public class AIAnalyticsHelper {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
+            public void onFailure(Call<SenopatiResponse> call, Throwable t) {
                 Log.e("AIAnalyticsHelper", "Network Error (" + logTag + ")", t);
                 listener.onError("Error Jaringan: " + t.getMessage());
             }
