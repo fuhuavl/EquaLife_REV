@@ -23,7 +23,7 @@ public class RetrofitClient {
                     .addInterceptor(logging)
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(60, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)    
+                    .writeTimeout(30, TimeUnit.SECONDS)
                     .build();
 
             retrofit = new Retrofit.Builder()

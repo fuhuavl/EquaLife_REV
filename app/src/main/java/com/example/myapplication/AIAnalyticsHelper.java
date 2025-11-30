@@ -111,11 +111,6 @@ public class AIAnalyticsHelper {
 
         callApi(systemPrompt, userPrompt, "Hydration", listener);
     }
-
-
-    /**
-     * FUNGSI INTI - DIUBAH UNTUK SENOPATI API
-     */
     private void callApi(String systemPrompt, String userPrompt, String logTag, AIResponseListener listener) {
 
         List<Message> messages = new ArrayList<>();
@@ -125,9 +120,7 @@ public class AIAnalyticsHelper {
         ApiRequest request = new ApiRequest("llama-3.1-8b-instant", messages);
 
         Log.d("AIAnalyticsHelper", "=== SENDING REQUEST (" + logTag + ") ===");
-        Log.d("AIAnalyticsHelper", "Target Date: " + userPrompt.substring(userPrompt.indexOf("tanggal") + 8, userPrompt.indexOf("tanggal") + 18));
 
-        // GANTI KE SenopatiResponse
         apiService.getChatCompletion(request).enqueue(new Callback<SenopatiResponse>() {
             @Override
             public void onResponse(Call<SenopatiResponse> call, Response<SenopatiResponse> response) {
@@ -135,11 +128,25 @@ public class AIAnalyticsHelper {
 
                 if (response.isSuccessful() && response.body() != null) {
 
-                    // AMBIL CONTENT LANGSUNG (GA LEWAT CHOICES LAGI)
-                    String aiResponseContent = response.body().content;
+                    // CEK SUCCESS FLAG
+                    if (!response.body().success) {
+                        Log.e("AIAnalyticsHelper", "API returned success=false, error: " + response.body().error);
+                        listener.onError("API Error: " + response.body().error);
+                        return;
+                    }
+
+                    // CEK DATA OBJECT
+                    if (response.body().data == null) {
+                        Log.e("AIAnalyticsHelper", "Data object is null");
+                        listener.onError("Server tidak memberikan data.");
+                        return;
+                    }
+
+                    // AMBIL REPLY (INI YANG BERUBAH!)
+                    String aiResponseContent = response.body().data.reply;
 
                     if (aiResponseContent == null || aiResponseContent.isEmpty()) {
-                        Log.e("AIAnalyticsHelper", "Content is null or empty (" + logTag + ")");
+                        Log.e("AIAnalyticsHelper", "Reply is null or empty (" + logTag + ")");
                         listener.onError("AI tidak memberikan balasan.");
                         return;
                     }
@@ -172,7 +179,8 @@ public class AIAnalyticsHelper {
 
                         // INSERT KE DATABASE
                         for (Task task : aiTasks) {
-                            if (task.getTaskName() == null || task.getDate() == null || task.getStartTime() == null || task.getEndTime() == null) {
+                            if (task.getTaskName() == null || task.getDate() == null ||
+                                    task.getStartTime() == null || task.getEndTime() == null) {
                                 Log.w("AIAnalyticsHelper", "AI task skipped due to null fields: " + gson.toJson(task));
                                 continue;
                             }

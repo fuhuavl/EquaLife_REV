@@ -1,13 +1,14 @@
 package com.example.myapplication;
 
-public class SenopatiResponse {
-    public String content;
-    public String model;
-    public Usage usage;
+import java.util.List;
 
-    public static class Usage {
-        public int prompt_tokens;
-        public int completion_tokens;
-        public int total_tokens;
+public class SenopatiResponse {
+    public boolean success;
+    public String error;
+    public Data data;
+
+    public static class Data {
+        public String reply;
+        public List<Message> messages;
     }
 }
