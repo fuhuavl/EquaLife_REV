@@ -47,7 +47,7 @@
         <!-- White Card Section -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="494dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="-40dp"
             android:background="@drawable/rounded_top_card"
             android:elevation="4dp"
@@ -128,6 +128,36 @@
                 android:text="Don't have an account? Sign Up"
                 android:textColor="#000000"
                 android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Footer: Powered by SENOPATI -->
+        <LinearLayout
+            android:id="@+id/llFooter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="#7C3AED"
+            android:padding="16dp">
+
+            <!-- Text "Powered by" -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Powered by"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp"/>
+
+            <!-- Logo SENOPATI (PNG) -->
+            <ImageView
+                android:id="@+id/imageViewSenopati"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/senopati_logo"
+                android:contentDescription="Senopati"/>
 
         </LinearLayout>
 

@@ -40,7 +40,10 @@
             android:layout_height="wrap_content"
             android:background="@drawable/button_background"
             android:textColor="@android:color/white"/>
+
     </LinearLayout>
+
+
 
     <LinearLayout
         android:id="@+id/llTopInfo"

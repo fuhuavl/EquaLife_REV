@@ -47,4 +47,34 @@
         android:textColor="#ffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <!-- Footer: Powered by SENOPATI -->
+    <LinearLayout
+        android:id="@+id/llFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Text "Powered by"   -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Powered by"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+
+        <!-- Logo SENOPATI (PNG) -->
+        <ImageView
+            android:id="@+id/imageViewSenopati"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="Senopati"
+            android:src="@drawable/senopati_logo" />
+
+    </LinearLayout>
 </LinearLayout>
+
