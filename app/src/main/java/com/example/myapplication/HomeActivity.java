@@ -160,11 +160,11 @@ public class HomeActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         btnAdjustDiet.setOnClickListener(v -> {
             if (aiHelper == null) {
-                Toast.makeText(this, "AI Helper tidak tersedia", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Senopati tidak tersedia", Toast.LENGTH_SHORT).show();
                 return;
             }
             showConfirmationDialog("Adjust Diet", () -> {
-                Toast.makeText(this, "AI sedang menganalisis " + currentlyDisplayedDate + "...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Senopati sedang menganalisis " + currentlyDisplayedDate + "...", Toast.LENGTH_SHORT).show();
                 aiHelper.adjustDiet(new AIResponseListener() {
                     @Override
                     public void onSuccess() {
@@ -181,11 +181,11 @@ public class HomeActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         btnAdjustSleep.setOnClickListener(v -> {
             if (aiHelper == null) {
-                Toast.makeText(this, "AI Helper tidak tersedia", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Senopati tidak tersedia", Toast.LENGTH_SHORT).show();
                 return;
             }
             showConfirmationDialog("Adjust Sleep", () -> {
-                Toast.makeText(this, "AI sedang menganalisis " + currentlyDisplayedDate + "...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Senopati sedang menganalisis " + currentlyDisplayedDate + "...", Toast.LENGTH_SHORT).show();
                 aiHelper.adjustSleep(new AIResponseListener() {
                     @Override
                     public void onSuccess() {
@@ -202,11 +202,11 @@ public class HomeActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         btnAdjustHydration.setOnClickListener(v -> {
             if (aiHelper == null) {
-                Toast.makeText(this, "AI Helper tidak tersedia", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Senopati tidak tersedia", Toast.LENGTH_SHORT).show();
                 return;
             }
             showConfirmationDialog("Adjust Hydration", () -> {
-                Toast.makeText(this, "AI sedang menganalisis " + currentlyDisplayedDate + "...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Senopati sedang menganalisis " + currentlyDisplayedDate + "...", Toast.LENGTH_SHORT).show();
                 aiHelper.adjustHydration(new AIResponseListener() {
                     @Override
                     public void onSuccess() {
@@ -261,7 +261,7 @@ public class HomeActivity extends AppCompatActivity implements TaskAdapter.OnTas
         try {
             new AlertDialog.Builder(this)
                     .setTitle(title)
-                    .setMessage("Apakah Anda yakin ingin AI menganalisis dan menambahkan jadwal baru untuk tanggal " + currentlyDisplayedDate + "?")
+                    .setMessage("Apakah Anda yakin ingin Senopati menganalisis dan menambahkan jadwal baru untuk tanggal " + currentlyDisplayedDate + "?")
                     .setPositiveButton("Ya, Jalankan", (dialog, which) -> onConfirm.run())
                     .setNegativeButton("Batal", null)
                     .show();
